@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intern_task_level_0/models/item_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-// Firebase側の処理
-
 abstract class BaseItemRepository {
   Future<List<Item>> retrieveItems();
   Future<String> createItem({required Item item});
@@ -11,11 +9,9 @@ abstract class BaseItemRepository {
   Future<void> deleteItem({required String id});
 }
 
-// インスタンスを取得
 final firebaseFirestoreProvider =
     Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
 
-//「ItemRepository」の状態を管理
 final itemRepositoryProvider =
     Provider<ItemRepository>((ref) => ItemRepository(ref.read));
 

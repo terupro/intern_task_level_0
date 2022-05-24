@@ -2,17 +2,13 @@ import 'package:intern_task_level_0/models/item_model.dart';
 import 'package:intern_task_level_0/repositories/item_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-// リストの状態管理
 final itemListControllerProvider =
     StateNotifierProvider<ItemListController, AsyncValue<List<Item>>>((ref) {
   return ItemListController(ref.read);
 });
 
-// 表示するリスト
 final itemListProvider = Provider<List<Item>>((ref) {
   final _itemListControllerProvider = ref.watch(itemListControllerProvider);
-
-  // エラー時のみ処理を分ける
   return _itemListControllerProvider.maybeWhen(
     data: (items) {
       return items.where((item) => item.isCompleted).toList();
@@ -21,7 +17,6 @@ final itemListProvider = Provider<List<Item>>((ref) {
   );
 });
 
-// リストを操作する
 class ItemListController extends StateNotifier<AsyncValue<List<Item>>> {
   final Reader _read;
   ItemListController(this._read) : super(const AsyncValue.loading()) {
