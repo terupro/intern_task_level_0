@@ -3,6 +3,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intern_task_level_0/controllers/item_list_controller.dart';
 import 'package:intern_task_level_0/models/item_model.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 final currentItemProvider = Provider<Item>((_) => throw UnimplementedError());
 
@@ -10,14 +13,16 @@ class HomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final _itemListControllerProvider = ref.watch(itemListControllerProvider);
+    final _itemListControllerNotifier =
+        ref.watch(itemListControllerProvider.notifier);
     final _itemListProvider = ref.watch(itemListProvider);
     return Scaffold(
-      appBar: AppBar(title: Text('TODO APP')),
+      appBar: AppBar(title: const Text('TODO APP')),
       body: _itemListControllerProvider.when(
         data: (items) => items.isEmpty
             ? const Center(
                 child: Text(
-                  'Tap + to add an item',
+                  'タスクがありません',
                   style: TextStyle(fontSize: 20.0),
                 ),
               )
@@ -25,23 +30,47 @@ class HomeScreen extends HookConsumerWidget {
                 itemCount: _itemListProvider.length,
                 itemBuilder: (BuildContext context, int index) {
                   final item = _itemListProvider[index];
+                  String getTodayDate() {
+                    initializeDateFormatting('ja');
+                    return DateFormat('yyyy/MM/dd HH:mm', "ja")
+                        .format(item.createdAt);
+                  }
+
                   return ProviderScope(
                     overrides: [currentItemProvider.overrideWithValue(item)],
-                    child: ListTile(
+                    child: Dismissible(
                       key: ValueKey(item.id),
-                      title: Text(item.title),
-                      trailing: Checkbox(
-                        value: item.isCompleted,
-                        onChanged: (val) => ref
-                            .read(itemListControllerProvider.notifier)
-                            .updateItem(
-                                updatedItem: item.copyWith(
-                                    isCompleted: !item.isCompleted)),
+                      background: Container(
+                        color: Colors.red,
                       ),
-                      onTap: () => AddItemDialog.show(context, item),
-                      onLongPress: () => ref
-                          .read(itemListControllerProvider.notifier)
-                          .deleteItem(itemId: item.id!),
+                      onDismissed: (_) {
+                        _itemListControllerNotifier.deleteItem(
+                          itemId: item.id!,
+                        );
+                      },
+                      child: Column(
+                        children: [
+                          ListTile(
+                            key: ValueKey(item.id),
+                            title: Text(item.title),
+                            subtitle: Text(getTodayDate()),
+                            trailing: Checkbox(
+                              value: item.isCompleted,
+                              onChanged: (val) => ref
+                                  .read(itemListControllerProvider.notifier)
+                                  .updateItem(
+                                    updatedItem: item.copyWith(
+                                        isCompleted: !item.isCompleted),
+                                  ),
+                            ),
+                            onTap: () => AddItemDialog.show(context, item),
+                            onLongPress: () => ref
+                                .read(itemListControllerProvider.notifier)
+                                .deleteItem(itemId: item.id!),
+                          ),
+                          const Divider(height: 2),
+                        ],
+                      ),
                     ),
                   );
                 },

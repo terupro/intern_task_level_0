@@ -11,7 +11,7 @@ final itemListProvider = Provider<List<Item>>((ref) {
   final _itemListControllerProvider = ref.watch(itemListControllerProvider);
   return _itemListControllerProvider.maybeWhen(
     data: (items) {
-      return items.where((item) => item.isCompleted).toList();
+      return items;
     },
     orElse: () => [],
   );

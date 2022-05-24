@@ -1,10 +1,6 @@
-/// date_time_timestamp_converter.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 export 'package:cloud_firestore/cloud_firestore.dart';
-
 part 'item_model.freezed.dart';
 part 'item_model.g.dart';
 
