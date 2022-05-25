@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 
 final currentItemProvider = Provider<Item>((_) => throw UnimplementedError());
 
-class HomeScreen extends HookConsumerWidget {
+class HomePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final _itemListControllerProvider = ref.watch(itemListControllerProvider);
