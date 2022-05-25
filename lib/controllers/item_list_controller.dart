@@ -22,7 +22,6 @@ class ItemListController extends StateNotifier<AsyncValue<List<Item>>> {
   ItemListController(this._read) : super(const AsyncValue.loading()) {
     retrieveItems();
   }
-
   // 取得
   Future<void> retrieveItems({bool isRefreshing = false}) async {
     if (isRefreshing) state = const AsyncValue.loading();
