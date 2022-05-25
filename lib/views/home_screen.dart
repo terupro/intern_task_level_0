@@ -56,16 +56,14 @@ class HomeScreen extends HookConsumerWidget {
                             subtitle: Text(getTodayDate()),
                             trailing: Checkbox(
                               value: item.isCompleted,
-                              onChanged: (val) => ref
-                                  .read(itemListControllerProvider.notifier)
-                                  .updateItem(
-                                    updatedItem: item.copyWith(
-                                        isCompleted: !item.isCompleted),
-                                  ),
+                              onChanged: (val) =>
+                                  _itemListControllerNotifier.updateItem(
+                                updatedItem: item.copyWith(
+                                    isCompleted: !item.isCompleted),
+                              ),
                             ),
                             onTap: () => AddItemDialog.show(context, item),
-                            onLongPress: () => ref
-                                .read(itemListControllerProvider.notifier)
+                            onLongPress: () => _itemListControllerNotifier
                                 .deleteItem(itemId: item.id!),
                           ),
                           const Divider(height: 2),
@@ -101,6 +99,8 @@ class AddItemDialog extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textController = useTextEditingController(text: item.title);
+    final _itemListControllerNotifier =
+        ref.watch(itemListControllerProvider.notifier);
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -123,17 +123,15 @@ class AddItemDialog extends HookConsumerWidget {
                 ),
                 onPressed: () {
                   isUpdating
-                      ? ref
-                          .read(itemListControllerProvider.notifier)
-                          .updateItem(
-                            updatedItem: item.copyWith(
-                              title: textController.text.trim(),
-                              isCompleted: item.isCompleted,
-                            ),
-                          )
-                      : ref
-                          .read(itemListControllerProvider.notifier)
-                          .addItem(name: textController.text.trim());
+                      ? _itemListControllerNotifier.updateItem(
+                          updatedItem: item.copyWith(
+                            title: textController.text.trim(),
+                            isCompleted: item.isCompleted,
+                          ),
+                        )
+                      : _itemListControllerNotifier.addItem(
+                          title: textController.text.trim(),
+                        );
                   Navigator.of(context).pop();
                 },
                 child: Text(isUpdating ? 'Update' : 'Add'),

@@ -36,11 +36,12 @@ class ItemListController extends StateNotifier<AsyncValue<List<Item>>> {
   }
 
   // 追加
-  Future<void> addItem({required String name, bool obtained = false}) async {
+  Future<void> addItem(
+      {required String title, bool isCompleted = false}) async {
     try {
       final item = Item(
-        title: name,
-        isCompleted: obtained,
+        title: title,
+        isCompleted: isCompleted,
         createdAt: DateTime.now(),
       );
       final itemId = await _read(itemRepositoryProvider).createItem(item: item);
