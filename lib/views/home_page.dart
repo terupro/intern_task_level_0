@@ -10,12 +10,19 @@ import 'package:intl/intl.dart';
 final currentItemProvider = Provider<Item>((_) => throw UnimplementedError());
 
 class HomePage extends HookConsumerWidget {
+  const HomePage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final _itemListControllerProvider = ref.watch(itemListControllerProvider);
     final _itemListControllerNotifier =
         ref.watch(itemListControllerProvider.notifier);
-    final _itemListProvider = ref.watch(itemListProvider);
+    final _itemList = _itemListControllerProvider.maybeWhen(
+      data: (items) {
+        return items;
+      },
+      orElse: () => [],
+    );
+
     return Scaffold(
       appBar: AppBar(title: const Text('TODO APP')),
       body: _itemListControllerProvider.when(
@@ -27,9 +34,9 @@ class HomePage extends HookConsumerWidget {
                 ),
               )
             : ListView.builder(
-                itemCount: _itemListProvider.length,
+                itemCount: _itemList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final item = _itemListProvider[index];
+                  final item = _itemList[index];
                   String getTodayDate() {
                     initializeDateFormatting('ja');
                     return DateFormat('yyyy/MM/dd HH:mm', "ja")

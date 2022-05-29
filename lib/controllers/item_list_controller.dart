@@ -7,16 +7,6 @@ final itemListControllerProvider =
   return ItemListController(ref.read);
 });
 
-final itemListProvider = Provider<List<Item>>((ref) {
-  final _itemListControllerProvider = ref.watch(itemListControllerProvider);
-  return _itemListControllerProvider.maybeWhen(
-    data: (items) {
-      return items;
-    },
-    orElse: () => [],
-  );
-});
-
 class ItemListController extends StateNotifier<AsyncValue<List<Item>>> {
   final Reader _read;
   ItemListController(this._read) : super(const AsyncValue.loading()) {
