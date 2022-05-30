@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intern_task_level_0/controllers/item_list_controller.dart';
+import 'package:intern_task_level_0/view_models/item_list_provider.dart';
 import 'package:intern_task_level_0/models/item_model.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-
-final currentItemProvider = Provider<Item>((_) => throw UnimplementedError());
 
 class HomePage extends HookConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // state
-    final itemList = ref.watch(itemListControllerProvider);
+    final itemList = ref.watch(itemListProvider);
     // provider
-    final itemListNotifier = ref.watch(itemListControllerProvider.notifier);
+    final itemListNotifier = ref.watch(itemListProvider.notifier);
     return Scaffold(
       appBar: AppBar(title: const Text('TODO APP')),
       body: itemList.when(
@@ -38,7 +36,6 @@ class HomePage extends HookConsumerWidget {
                   }
 
                   return ProviderScope(
-                    overrides: [currentItemProvider.overrideWithValue(item)],
                     child: Dismissible(
                       key: ValueKey(item.id),
                       background: Container(
@@ -57,14 +54,16 @@ class HomePage extends HookConsumerWidget {
                             subtitle: Text(getTodayDate()),
                             trailing: Checkbox(
                               value: item.isCompleted,
-                              onChanged: (val) => itemListNotifier.updateItem(
+                              onChanged: (_) => itemListNotifier.updateItem(
                                 updatedItem: item.copyWith(
-                                    isCompleted: !item.isCompleted),
+                                  isCompleted: !item.isCompleted,
+                                ),
                               ),
                             ),
                             onTap: () => AddItemDialog.show(context, item),
-                            onLongPress: () =>
-                                itemListNotifier.deleteItem(itemId: item.id!),
+                            onLongPress: () => itemListNotifier.deleteItem(
+                              itemId: item.id!,
+                            ),
                           ),
                           const Divider(height: 2),
                         ],
@@ -99,7 +98,7 @@ class AddItemDialog extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textController = useTextEditingController(text: item.title);
-    final itemListNotifier = ref.watch(itemListControllerProvider.notifier);
+    final itemListNotifier = ref.watch(itemListProvider.notifier);
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -125,7 +124,6 @@ class AddItemDialog extends HookConsumerWidget {
                       ? itemListNotifier.updateItem(
                           updatedItem: item.copyWith(
                             title: textController.text.trim(),
-                            isCompleted: item.isCompleted,
                           ),
                         )
                       : itemListNotifier.addItem(

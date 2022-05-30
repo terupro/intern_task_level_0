@@ -2,14 +2,14 @@ import 'package:intern_task_level_0/models/item_model.dart';
 import 'package:intern_task_level_0/repositories/item_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final itemListControllerProvider =
-    StateNotifierProvider<ItemListController, AsyncValue<List<Item>>>((ref) {
-  return ItemListController(ref.read);
+final itemListProvider =
+    StateNotifierProvider<ItemListNotifier, AsyncValue<List<Item>>>((ref) {
+  return ItemListNotifier(ref.read);
 });
 
-class ItemListController extends StateNotifier<AsyncValue<List<Item>>> {
+class ItemListNotifier extends StateNotifier<AsyncValue<List<Item>>> {
   final Reader _read;
-  ItemListController(this._read) : super(const AsyncValue.loading()) {
+  ItemListNotifier(this._read) : super(const AsyncValue.loading()) {
     retrieveItems();
   }
   // 取得
