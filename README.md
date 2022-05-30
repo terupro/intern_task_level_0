@@ -1,6 +1,7 @@
 # intern_task_level_0
 
-A new Flutter project.
+Flutter x Firebase　製のTODOリストアプリ(CRUD)です。
+MVVM+Repositoryパターンで作成しました。
 
 ## Image
 
