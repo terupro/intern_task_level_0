@@ -13,19 +13,13 @@ class HomePage extends HookConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _itemListControllerProvider = ref.watch(itemListControllerProvider);
-    final _itemListControllerNotifier =
-        ref.watch(itemListControllerProvider.notifier);
-    final _itemList = _itemListControllerProvider.maybeWhen(
-      data: (items) {
-        return items;
-      },
-      orElse: () => [],
-    );
-
+    // state
+    final itemList = ref.watch(itemListControllerProvider);
+    // provider
+    final itemListNotifier = ref.watch(itemListControllerProvider.notifier);
     return Scaffold(
       appBar: AppBar(title: const Text('TODO APP')),
-      body: _itemListControllerProvider.when(
+      body: itemList.when(
         data: (items) => items.isEmpty
             ? const Center(
                 child: Text(
@@ -34,9 +28,9 @@ class HomePage extends HookConsumerWidget {
                 ),
               )
             : ListView.builder(
-                itemCount: _itemList.length,
+                itemCount: items.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final item = _itemList[index];
+                  final item = items[index];
                   String getTodayDate() {
                     initializeDateFormatting('ja');
                     return DateFormat('yyyy/MM/dd HH:mm', "ja")
@@ -51,7 +45,7 @@ class HomePage extends HookConsumerWidget {
                         color: Colors.red,
                       ),
                       onDismissed: (_) {
-                        _itemListControllerNotifier.deleteItem(
+                        itemListNotifier.deleteItem(
                           itemId: item.id!,
                         );
                       },
@@ -63,15 +57,14 @@ class HomePage extends HookConsumerWidget {
                             subtitle: Text(getTodayDate()),
                             trailing: Checkbox(
                               value: item.isCompleted,
-                              onChanged: (val) =>
-                                  _itemListControllerNotifier.updateItem(
+                              onChanged: (val) => itemListNotifier.updateItem(
                                 updatedItem: item.copyWith(
                                     isCompleted: !item.isCompleted),
                               ),
                             ),
                             onTap: () => AddItemDialog.show(context, item),
-                            onLongPress: () => _itemListControllerNotifier
-                                .deleteItem(itemId: item.id!),
+                            onLongPress: () =>
+                                itemListNotifier.deleteItem(itemId: item.id!),
                           ),
                           const Divider(height: 2),
                         ],
@@ -106,8 +99,7 @@ class AddItemDialog extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textController = useTextEditingController(text: item.title);
-    final _itemListControllerNotifier =
-        ref.watch(itemListControllerProvider.notifier);
+    final itemListNotifier = ref.watch(itemListControllerProvider.notifier);
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -130,13 +122,13 @@ class AddItemDialog extends HookConsumerWidget {
                 ),
                 onPressed: () {
                   isUpdating
-                      ? _itemListControllerNotifier.updateItem(
+                      ? itemListNotifier.updateItem(
                           updatedItem: item.copyWith(
                             title: textController.text.trim(),
                             isCompleted: item.isCompleted,
                           ),
                         )
-                      : _itemListControllerNotifier.addItem(
+                      : itemListNotifier.addItem(
                           title: textController.text.trim(),
                         );
                   Navigator.of(context).pop();
