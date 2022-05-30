@@ -34,6 +34,7 @@ class Item with _$Item {
     final data = doc.data()! as Map<String, dynamic>;
     return Item.fromJson(data).copyWith(id: doc.id);
   }
+
   Map<String, dynamic> toDocument() => toJson()..remove('id');
 
   factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);

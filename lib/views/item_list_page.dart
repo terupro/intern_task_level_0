@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intern_task_level_0/view_models/item_list_provider.dart';
+import 'package:intern_task_level_0/view_models/item_list_view_model.dart';
 import 'package:intern_task_level_0/models/item_model.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-class HomePage extends HookConsumerWidget {
-  const HomePage({Key? key}) : super(key: key);
+class ItemListPage extends HookConsumerWidget {
+  const ItemListPage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // state
@@ -83,7 +83,7 @@ class HomePage extends HookConsumerWidget {
   }
 }
 
-// TODO作成画面
+// todo作成ダイアログ
 class AddItemDialog extends HookConsumerWidget {
   static void show(BuildContext context, Item item) {
     showDialog(
